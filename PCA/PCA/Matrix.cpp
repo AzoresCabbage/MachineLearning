@@ -11,16 +11,6 @@ Matrix::Matrix(const int n,const int m):row(n),col(m)
 	}
 }
 
-Matrix::Matrix(const int n,const int m,double** a):row(n),col(m)
-{
-	mat = new double*[n];
-	for(int i=0;i<n;++i)
-	{
-		mat[i] = new double[m];
-		memcpy(mat[i],a[i],sizeof(double)*m);
-	}
-}
-
 Matrix::~Matrix()
 {
 	for(int i=0;i<row;++i)
@@ -34,7 +24,7 @@ Matrix::Matrix(const Matrix& a):row(a.row),col(a.col)
 	for(int i=0;i<row;++i)
 	{
 		mat[i] = new double[col];
-		memcpy(mat[i],a.mat[i],sizeof(double)*col);
+		memcpy(mat[i],a[i],sizeof(double)*col);
 	}
 }
 
@@ -46,7 +36,7 @@ Matrix& Matrix::operator=(const Matrix& a)
 	for(int i=0;i<a.row;++i)
 	{
 		mat[i] = new double[a.col];
-		memcpy(mat[i],a.mat[i],sizeof(double)*a.col);
+		memcpy(mat[i],a[i],sizeof(double)*a.col);
 	}
 	for(int i=0;i<row;++i)
 		delete[] tmp[i];
@@ -62,7 +52,7 @@ Matrix Matrix::transpose()
 	Matrix ret(col,row);
 	for(int i=0;i<col;++i)
 		for(int j=0;j<row;++j)
-			ret.mat[i][j] = mat[j][i];
+			ret[i][j] = mat[j][i];
 	return ret;
 }
 
@@ -87,7 +77,7 @@ Matrix Matrix::operator+(const Matrix& a)const
 	Matrix ret(a);
 	for(int i=0;i<row;++i)
 		for(int j=0;j<col;++j)
-			ret.mat[i][j] += mat[i][j];
+			ret[i][j] += mat[i][j];
 	return ret;
 }
 
@@ -101,7 +91,7 @@ Matrix Matrix::operator-(const Matrix& a)const
 	Matrix ret(*this);
 	for(int i=0;i<row;++i)
 		for(int j=0;j<col;++j)
-			ret.mat[i][j] -= a.mat[i][j];
+			ret[i][j] -= a[i][j];
 	return ret;
 }
 
@@ -114,18 +104,18 @@ Matrix Matrix::operator*(const Matrix& a)const
 	}
 	Matrix ret(row,a.col);
 	
-	/*for(int i=0;i<row;i++)
+	for(int i=0;i<row;i++)
 		for(int k=0;k<col;k++){
 			if(mat[i][k] == 0) continue;
 			for(int j=0;j<a.col;j++)
-				ret.mat[i][j] += mat[i][k] * a.mat[k][j];
+				ret[i][j] += mat[i][k] * a[k][j];
 		}
-		*/
-	for(int i=0;i<row;++i)
+	return ret;	
+	/*for(int i=0;i<row;++i)
 		for(int j=0;j<a.col;++j)
 			for(int k=0;k<col;++k)
-				ret.mat[i][j] += mat[i][k]*a.mat[k][j];
-	return ret;
+				ret[i][j] += mat[i][k]*a[k][j];
+	return ret;*/
 }
 
 Matrix Matrix::operator*(const double a)const
@@ -133,7 +123,7 @@ Matrix Matrix::operator*(const double a)const
 	Matrix ret(*this);
 	for(int i=0;i<row;++i)
 		for(int j=0;j<col;++j)
-			ret.mat[i][j] *= a;
+			ret[i][j] *= a;
 	return ret;
 }
 
@@ -142,7 +132,7 @@ bool Matrix::operator==(const Matrix& a)const
 	if(row != a.row || col != a.col) return false;
 	for(int i=0;i<row;++i)
 		for(int j=0;j<col;++j)
-			if(a.mat[i][j] != mat[i][j])
+			if(a[i][j] != mat[i][j])
 				return false;
 	return true;
 }
@@ -157,6 +147,16 @@ Matrix Matrix::operator-(const double a)const
 	Matrix ret(*this);
 	for(int i=0;i<row;++i)
 		for(int j=0;j<col;++j)
-			ret.mat[i][j] -= a;
+			ret[i][j] -= a;
 	return ret;
+}
+
+double* const Matrix::operator [] (const int& idx)const
+{
+	if(idx < 0 || row < idx)
+	{
+		printf("%d out of range!",idx);
+		exit(-1);
+	}
+	return mat[idx];
 }

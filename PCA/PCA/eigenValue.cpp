@@ -4,7 +4,7 @@
 bool eigenValue::isConvergence(const Matrix& M)
 {
 	for(int i=1;i<M.row;++i)
-		if(fabs(M.mat[i][i-1]) >= eps)
+		if(fabs(M[i][i-1]) >= eps)
 			return false;
 	return true;
 }
@@ -12,11 +12,11 @@ bool eigenValue::isConvergence(const Matrix& M)
 Matrix eigenValue::getRForAStep(const Matrix& R,const int i)
 {
 	Matrix partR = hessenberg.getIdentityMatrix(R.row);
-	double r = R.mat[i][i]*R.mat[i][i] + R.mat[i+1][i]*R.mat[i+1][i];
+	double r = R[i][i]*R[i][i] + R[i+1][i]*R[i+1][i];
 	r = sqrt(r);
-	partR.mat[i][i] = partR.mat[i+1][i+1] = R.mat[i][i]/r;
-	partR.mat[i][i+1] = R.mat[i+1][i]/r;
-	partR.mat[i+1][i] = -R.mat[i+1][i]/r;
+	partR[i][i] = partR[i+1][i+1] = R[i][i]/r;
+	partR[i][i+1] = R[i+1][i]/r;
+	partR[i+1][i] = -R[i+1][i]/r;
 	return partR;
 }
 
@@ -33,6 +33,7 @@ Matrix eigenValue::convertToHessenberg(const Matrix& A)
 	return R;
 }
 
+//QR decomposition to get all eigenvalues
 std::vector <double> eigenValue::getEigenValues(const Matrix& M)
 {
 	Matrix hessenMat = convertToHessenberg(M);
@@ -56,7 +57,7 @@ std::vector <double> eigenValue::getEigenValues(const Matrix& M)
 		{
 			std::vector <double> ret;
 			for(int i=0;i<row;++i)
-				ret.push_back(B.mat[i][i]);
+				ret.push_back(B[i][i]);
 			return ret;
 		}
 	}

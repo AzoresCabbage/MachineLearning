@@ -2,11 +2,11 @@
 #include "HessenbergHouseholderReflection.h"
 
 
-Matrix HessenbergHouseholderReflection::getIdentityMatrix(int size)
+Matrix HessenbergHouseholderReflection::getIdentityMatrix(const int size)
 {
 	Matrix res(size,size);
 	for(int i=0;i<size;++i)
-		res.mat[i][i] = 1;
+		res[i][i] = 1;
 	return res;
 }
 
@@ -27,12 +27,12 @@ Matrix HessenbergHouseholderReflection::getMatrixPatCol(const Matrix& M,const in
 	Matrix vt = v.transpose();
 	Matrix vMulvt = v * vt;//is a value stored in mat[0][0]
 	Matrix vtMulv = vt * v;
-	if(vtMulv.mat[0][0] == 0)
+	if(vtMulv[0][0] == 0)
 	{
 		printf("Vector v multiply v^T = 0!");
 		exit(-1);
 	}
-	Matrix P = vMulvt * (1.0/vtMulv.mat[0][0]);
+	Matrix P = vMulvt * (1.0/vtMulv[0][0]);
 	return P;
 }
 
@@ -50,17 +50,17 @@ Matrix HessenbergHouseholderReflection::getXatCol(const Matrix& M,const int col)
 	Matrix ret(M.row,1);
 	for(int i=0;i<M.row;++i)
 		if(i > col)
-			ret.mat[i][0] = M.mat[i][col];
+			ret[i][0] = M[i][col];
 	return ret;
 }
 
 Matrix HessenbergHouseholderReflection::getVatCol(const Matrix& x,const Matrix& w)
 {
 	int sign = 1;
-	if(x.mat[0][0] > 0) sign = -1;
+	if(x[0][0] > 0) sign = -1;
 	Matrix v(x.row,x.col);
 	for(int i=0;i<v.row;++i)
-		v.mat[i][0] = x.mat[i][0] + w.mat[i][0];
+		v[i][0] = x[i][0] + w[i][0];
 	return v;
 }
 
@@ -69,8 +69,8 @@ Matrix HessenbergHouseholderReflection::getWatCol(const Matrix& M,const int col)
 	Matrix w(M.row,1);
 	double tmp = 0;
 	for(int i=0;i<M.row;++i)
-		tmp += M.mat[i][0]*M.mat[i][0];
+		tmp += M[i][0]*M[i][0];
 	tmp = sqrt(tmp);
-	w.mat[col+1][0] = tmp;
+	w[col+1][0] = tmp;
 	return w;
 }
